@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "797002252251",
+    "firebase_url": "https://messanger-app-b3553.firebaseio.com",
+    "project_id": "messanger-app-b3553",
+    "storage_bucket": "messanger-app-b3553.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:797002252251:android:c7036f33142b06c2",
+        "android_client_info": {
+          "package_name": "com.example.yuki.messanger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "797002252251-64nikf0tf73q98mdkbainpul5kr45o4n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzu76eZSNA0ZUpg-k8RMIH2HhRosH1yHw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
