@@ -1,31 +1,29 @@
 package com.example.yuki.messanger;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApi;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import org.w3c.dom.Text;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
+    FirebaseAuth mAuth;
+
     private TextInputLayout usernameWrapper;
     private TextInputLayout passwordWrapper;
     private LinearLayout layout;
 
-    private static final int RC_SIGN_IN = 9001;
-   
 
 
     @Override
@@ -36,6 +34,8 @@ public class LoginActivity extends AppCompatActivity {
         usernameWrapper = findViewById(R.id.usernameWrapper);
         passwordWrapper = findViewById(R.id.passwordWrapper);
         layout = findViewById(R.id.linearLayout);
+
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -70,11 +70,23 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.loginButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                login(username.getText().toString(), password.getText().toString());
+            }
+        });
+
     }
 
 
     public void goToRegister(View view) {
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToUsers(View view){
+        Intent intent = new Intent(LoginActivity.this, Users.class);
         startActivity(intent);
     }
 
@@ -98,6 +110,43 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             passwordWrapper.setErrorEnabled(false);
         }
+    }
+
+    private void login(String email, String password){
+        if(!checkValidation()){
+            Toast.makeText(LoginActivity.this, "Something went wrong, try again", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    //TODO: change intent
+                    Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_LONG).show();
+                } else {
+                    //TODO: on failure
+                    Toast.makeText(LoginActivity.this, "Something went wrong, try again", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private boolean checkValidation() {
+        boolean isValid = true;
+
+        EditText username = usernameWrapper.getEditText();
+        EditText password = passwordWrapper.getEditText();
+
+        if(EditTextUtil.isEmpty(username.getText().toString()) || EditTextUtil.isEmpty(password.getText().toString())) {
+            isValid = false;
+        } else if (!EditTextUtil.isValidEmail(username.getText().toString())){
+            isValid = false;
+        } else if (password.getText().toString().length() < 4){
+            isValid = false;
+        }
+
+        return  isValid;
     }
 
 }

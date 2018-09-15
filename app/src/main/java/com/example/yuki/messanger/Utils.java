@@ -13,4 +13,6 @@ public class Utils {
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
+    public static int SIGN_IN_REQUEST_CODE = 1;
+
 }
