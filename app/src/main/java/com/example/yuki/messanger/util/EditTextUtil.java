@@ -1,4 +1,4 @@
-package com.example.yuki.messanger;
+package com.example.yuki.messanger.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

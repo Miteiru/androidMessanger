@@ -1,4 +1,4 @@
-package com.example.yuki.messanger;
+package com.example.yuki.messanger.util;
 
 import android.text.Editable;
 import android.text.TextWatcher;

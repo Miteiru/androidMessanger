@@ -104,6 +104,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:textColor="@color/colorPrimaryDark"
-            android:text="Register" />
+            android:text="Register"
+            />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

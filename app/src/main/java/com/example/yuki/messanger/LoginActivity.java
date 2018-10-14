@@ -1,5 +1,6 @@
 package com.example.yuki.messanger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -7,11 +8,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.yuki.messanger.util.EditTextUtil;
+import com.example.yuki.messanger.util.TextValidator;
+import com.example.yuki.messanger.util.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -73,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.loginButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboard();
                 login(username.getText().toString(), password.getText().toString());
             }
         });
@@ -86,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void goToUsers(View view){
-        Intent intent = new Intent(LoginActivity.this, Users.class);
+        Intent intent = new Intent(LoginActivity.this, UsersActivity.class);
         startActivity(intent);
     }
 
@@ -124,12 +130,25 @@ public class LoginActivity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     //TODO: change intent
                     Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_LONG).show();
+                    goToUsers(findViewById(R.id.loginButton));
                 } else {
                     //TODO: on failure
                     Toast.makeText(LoginActivity.this, "Something went wrong, try again", Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        EditText email = usernameWrapper.getEditText();
+        EditText password = passwordWrapper.getEditText();
+
+        email.getText().clear();
+        password.getText().clear();
+
     }
 
     private boolean checkValidation() {
@@ -147,6 +166,16 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return  isValid;
+    }
+
+    private void hideKeyboard(){
+        View view = this.getCurrentFocus();
+        if (view != null){
+            InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (inputMethodManager != null) {
+                inputMethodManager.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
+            }
+        }
     }
 
 }

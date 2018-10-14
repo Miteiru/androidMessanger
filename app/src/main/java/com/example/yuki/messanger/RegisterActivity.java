@@ -1,5 +1,6 @@
 package com.example.yuki.messanger;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -11,17 +12,25 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.yuki.messanger.util.EditTextUtil;
+import com.example.yuki.messanger.util.TextValidator;
+import com.example.yuki.messanger.util.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class RegisterActivity extends AppCompatActivity {
-    FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
+    private DatabaseReference storeUserDefaultDataReference;
 
-    TextInputLayout newUsernameWrapper;
-    TextInputLayout newEmailWrapper;
-    TextInputLayout newPasswordWrapper;
+    private TextInputLayout newUsernameWrapper;
+    private TextInputLayout newEmailWrapper;
+    private TextInputLayout newPasswordWrapper;
     LinearLayout registerLayout;
 
     @Override
@@ -96,6 +105,32 @@ public class RegisterActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     //TODO: change intent
+
+                    final ArrayList<String> defaultRoom = new ArrayList<String>();
+                    defaultRoom.add("home");
+
+                    String currentUserId = mAuth.getCurrentUser().getUid();
+                    storeUserDefaultDataReference = FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId);
+
+                    storeUserDefaultDataReference.child("username").setValue(newUsernameWrapper.getEditText().getText().toString());
+                    storeUserDefaultDataReference.child("email").setValue(newEmailWrapper.getEditText().getText().toString());
+                    storeUserDefaultDataReference.child("id").setValue(currentUserId);
+
+                    storeUserDefaultDataReference.child("room").setValue(defaultRoom);
+                    storeUserDefaultDataReference.child("online").setValue(true)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(RegisterActivity.this, "New account created", Toast.LENGTH_LONG).show();
+
+                                        //TODO: change intent
+                                        goToUsers(findViewById(R.id.registerButton));
+
+                                    }
+                                }
+                            });
+
                     Toast.makeText(RegisterActivity.this, "New account created", Toast.LENGTH_LONG).show();
                 } else {
                     //TODO: on failure
@@ -103,6 +138,11 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void goToUsers(View view){
+        Intent intent = new Intent(RegisterActivity.this, UsersActivity.class);
+        startActivity(intent);
     }
 
     // Validation
